@@ -1,0 +1,258 @@
+ul,
+ol {
+  list-style: none;
+  display: none;
+
+}
+body
+{
+  background-color: transparent;
+}
+.nav {
+  background-color:transparent;
+  height: 50px;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  box-shadow: 2px 2px #e0e0e0;
+  justify-content: space-between; /* Aligns items to the start and end */
+  align-items: center;
+  /* background-image: url('https://developer.android.com/static/images/design/ui/mobile/system-bars-hero.png'); */
+}
+
+.nav a ,.services,.partners{
+  margin: 0;
+  padding: 10px;
+  color: black;
+  font-size: small;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.menu-hover ul {
+  position: absolute;
+  top: 35px;
+  left: 70px;
+  padding: 8px 0;
+  background-color:transparent;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  display: none; /* Initially hide the dropdown menu */
+}
+
+.menu-list  {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-list  li {
+  padding: 8px 16px;
+}
+
+.menu-list  li a {
+  color: black;
+  text-decoration: none;
+  display: block;
+}
+
+.menu-list  li a:hover {
+  background-color: transparent;
+}
+
+.nav a:hover,.services:hover,.partners:hover {
+  cursor: pointer;
+  color: rgb(16, 212, 13);
+}
+
+.nav .logo-name {
+  font-size: xx-small;
+  padding-bottom: 15px;
+}
+.nav .nav-content{
+  margin-top: 2px;
+}
+.logo1 {
+  display: flex;
+  border-radius: 50%;
+  height: 40px;
+  width: 50px;
+  margin-left: 20px;
+}
+
+.logo {
+  color: cornflowerblue;
+  margin-left: 10px;
+}
+
+.login:hover {
+  color: rgb(33, 33, 228);
+}
+
+.login {
+  margin-left: auto; /* Aligns to the right */
+  margin-right: 20px; /* Add some space between the login and the right edge */
+  margin-top: 15px;
+  text-transform: uppercase;
+  color: black;
+  font-weight: 700;
+}
+
+.top-bar {
+  color: #fff;
+  display: flex;
+  justify-content: flex-end; /* Aligns text to the right */
+  align-items: center;
+  margin-left: auto;
+  margin-top: 10px;
+  margin-bottom: 0px;
+  text-align: right;
+}
+
+.li-elements {
+  margin-right: 20px;
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+.notification-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.login-link {
+  margin-left: 0;
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  color: #fff;
+}
+
+.li-elements {
+  color: black;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.nav-content {
+  display: flex;
+  align-items: center;
+}
+
+.one,
+.two {
+  font-size: x-small;
+  padding: 10px;
+}
+
+.menus {
+  display: flex;
+  margin-left: 20px; /* Adjusted margin */
+}
+
+.nav ul {
+  list-style: none;
+  display: flex;
+  padding: 0;
+  margin-left: 20px; /* Adjusted margin */
+}
+
+.nav .search {
+  min-width: 100%;
+  margin-left: 20px; /* Adjusted margin */
+  border-radius: 20px;
+  border: 0;
+}
+
+.user-icon-image {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  left: 1350px;
+  top: 9px;
+}
+
+.name {
+  margin-top: 15px;
+  margin-left: 10px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+
+.toggle {
+  margin-bottom: 13px;
+  margin-left: 10px;
+}
+
+.li-search {
+  margin-bottom: 15px;
+}
+
+.mobile-nav ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
+.user-name-li {
+  overflow: hidden;
+}
+.links{
+  margin-left:0px;
+  text-align: left;
+
+}
+.links ul {
+  margin-left: 0;
+ 
+}
+
+@media (max-width: 768px) {
+  .nav ul {
+    margin-left: 10px;
+  }
+
+  .user-icon-image,
+  .notification-icon,
+  .user-name {
+    position: static;
+    margin: 5px 10px;
+  }
+}
+
+@media (max-width: 840px) {
+  .nav ul {
+    margin-left: 10px;
+  }
+  
+}
+
+@media (min-width: 1095px) {
+  .nav ul {
+    margin-left: 10px;
+  }
+  .links ul {
+    margin-left: 40px;
+    text-align: right; /* Aligns the text to the right */
+    display: flex; /* Allows flexbox layout */
+    justify-content: flex-end; /* Aligns items to the end (right) */
+    margin-right: 20px; /* Adjust the margin as needed */
+  }
+}
+
+@media (max-width: 1200px) {
+  .nav ul {
+    margin-left: 10px;
+  }
+  .links ul {
+    margin-left: 40px;
+    text-align: right; /* Aligns the text to the right */
+    display: flex; /* Allows flexbox layout */
+    justify-content: flex-end; /* Aligns items to the end (right) */
+    margin-right: 20px; /* Adjust the margin as needed */
+  }
+}
