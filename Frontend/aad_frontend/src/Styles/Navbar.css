@@ -1,5 +1,5 @@
-ul,
-ol {
+.nav ul,
+.nav ol {
   list-style: none;
   display: none;
 
@@ -15,7 +15,8 @@ body
   left: 0;
   right: 0;
   z-index: 1;
-  box-shadow: 2px 2px #e0e0e0;
+  margin-bottom: 10px;
+  /* box-shadow: 2px 2px #e0e0e0; */
   justify-content: space-between; /* Aligns items to the start and end */
   align-items: center;
   /* background-image: url('https://developer.android.com/static/images/design/ui/mobile/system-bars-hero.png'); */
@@ -35,7 +36,7 @@ body
   left: 70px;
   padding: 8px 0;
   background-color:transparent;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); */
   border-radius: 4px;
   display: none; /* Initially hide the dropdown menu */
 }

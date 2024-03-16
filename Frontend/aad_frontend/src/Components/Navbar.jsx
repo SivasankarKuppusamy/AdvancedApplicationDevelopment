@@ -5,8 +5,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.jpg'
 const Navbar = () => {
-  const [show, setShow] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
 
   return (
     <div className="nav">
@@ -26,14 +24,8 @@ const Navbar = () => {
           <div className='links'>
             <ul>
               <li className='li-elements' >
-                <div onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)} className='services'>Services
-                <div className='menu-hover'>  {showMenu && (
-              <ul className="menu-list">
-                <li><Link to="/menu1">Menu 1</Link></li>
-                <li><Link to="/menu2">Menu 2</Link></li>
-                <li><Link to="/menu3">Menu 3</Link></li>
-              </ul>
-            )}</div>
+                <div className='services'><Link to='/#ser'>Services</Link>
+               
             </div>
               </li>
               <li className='li-elements'>
