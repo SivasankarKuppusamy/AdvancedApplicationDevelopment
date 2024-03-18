@@ -11,6 +11,8 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
     const loggedInStatus = localStorage.getItem('isLoggedIn');
     setIsLoggedIn(loggedInStatus === 'true');
   }, []);
+  const name=localStorage.getItem("userName")
+
   return (
     <div className="nav">
       <header>
@@ -34,7 +36,7 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
             </div>
               </li>
               <li className='li-elements'>
-                <div className='partners'>Partners</div>
+                <div className='partners'><Link to='/loan-calculator'>EMI CALCULATOR</Link></div>
               </li>
               
               </ul>
@@ -49,7 +51,7 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
                     <Link to="/about">About</Link>
                   </li>
                   {isLoggedIn ? <>
-                    <li className="li-elements"> <Link to='/profile'> username</Link></li>
+                    <li className="li-elements"> <Link to='/profile'> {name}</Link></li>
                   </>:<>
                   <li className="li-elements">
                     <Link to="/register">Register</Link>

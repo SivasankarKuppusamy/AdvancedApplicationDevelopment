@@ -94,8 +94,8 @@ body
 }
 
 .login {
-  margin-left: auto; /* Aligns to the right */
-  margin-right: 20px; /* Add some space between the login and the right edge */
+  margin-left: auto; 
+  margin-right: 20px; 
   margin-top: 15px;
   text-transform: uppercase;
   color: black;
@@ -105,7 +105,7 @@ body
 .top-bar {
   color: #fff;
   display: flex;
-  justify-content: flex-end; /* Aligns text to the right */
+  justify-content: flex-end; 
   align-items: center;
   margin-left: auto;
   margin-top: 10px;
@@ -152,19 +152,19 @@ body
 
 .menus {
   display: flex;
-  margin-left: 20px; /* Adjusted margin */
+  margin-left: 20px;
 }
 
 .nav ul {
   list-style: none;
   display: flex;
   padding: 0;
-  margin-left: 20px; /* Adjusted margin */
+  margin-left: 20px;
 }
 
 .nav .search {
   min-width: 100%;
-  margin-left: 20px; /* Adjusted margin */
+  margin-left: 20px;
   border-radius: 20px;
   border: 0;
 }
@@ -241,10 +241,10 @@ body
   }
   .links ul {
     margin-left: 40px;
-    text-align: right; /* Aligns the text to the right */
-    display: flex; /* Allows flexbox layout */
-    justify-content: flex-end; /* Aligns items to the end (right) */
-    margin-right: 20px; /* Adjust the margin as needed */
+    text-align: right; 
+    display: flex; 
+    justify-content: flex-end; 
+    margin-right: 20px;
   }
 }
 
@@ -254,9 +254,9 @@ body
   }
   .links ul {
     margin-left: 40px;
-    text-align: right; /* Aligns the text to the right */
-    display: flex; /* Allows flexbox layout */
-    justify-content: flex-end; /* Aligns items to the end (right) */
-    margin-right: 20px; /* Adjust the margin as needed */
+    text-align: right; 
+    display: flex; 
+    justify-content: flex-end; 
+    margin-right: 20px;
   }
 }

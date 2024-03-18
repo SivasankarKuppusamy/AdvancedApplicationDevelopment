@@ -1,7 +1,12 @@
 import React from 'react';
 import '../Styles/LoanDetails.css'
 const LoanDetails = ({ isOpen, handleClose, loan }) => {
+  const handlePay = (loan) => {
+    alert(`Paid due amount of ${loan.dueAmount}`);
+  };
   return (
+    <>
+    {loan!=null?<>
     <div className={`modal ${isOpen ? 'open' : ''}`} onClick={handleClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="details-header">
@@ -25,6 +30,8 @@ const LoanDetails = ({ isOpen, handleClose, loan }) => {
         </div>
       </div>
     </div>
+    </>:<></>}
+    </> 
   );
 };
 

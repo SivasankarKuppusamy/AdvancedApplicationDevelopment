@@ -3,12 +3,16 @@
 .loans-container {
     display: flex;
     margin-top: 70px;
+    transition: margin-left 0.3s ease; 
+
   }
   
   .loans-content {
-    margin-left: 170px;
+    margin-left: 190px;
     flex: 1;
     padding: 20px;
+    transition: margin-left 0.3s ease; 
+
   }
   
   .loans-content h2 {
@@ -75,4 +79,18 @@
   .loan-requirements-button:hover {
     background-color: #0056b3;
   }
+  .sidebar.open {
+    width: 260px;
+  }
   
+  .sidebar.close {
+    width: 100px; 
+  }
+  
+ 
+  .sidebar.close+.loans-content{
+margin-left: 110px;
+  }
+  .sidebar.open + .loans-content {
+    margin-left: 210px; 
+  }

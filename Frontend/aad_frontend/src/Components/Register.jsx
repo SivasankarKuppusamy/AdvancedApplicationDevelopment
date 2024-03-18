@@ -21,7 +21,6 @@ function RegisterPage() {
   const validate = async (e) => {
     e.preventDefault();
 
-    // Client-side validation
     const errors = {};
     if (!name.trim()) {
       errors.name = 'Name is required';
@@ -55,8 +54,16 @@ function RegisterPage() {
         name,
         email,
         password,
+        isFilled:false,
+        role:'user',
       });
+      const response2=await axios.post('http://localhost:8080/api/userdetails',{
+        id:response.data.id,
+        fullName:response.data.name,
+        email:response.data.email,
 
+      })
+      console.log(response2);
       console.log('Registration successful:', response.data);
       nav('/login')
     } catch (error) {

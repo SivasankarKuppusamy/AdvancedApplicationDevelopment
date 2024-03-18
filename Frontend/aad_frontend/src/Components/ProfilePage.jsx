@@ -1,77 +1,94 @@
-import React, { useState } from 'react';
-import '../Styles/Profile.css';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Sidebar from './Sidebar';
+import '../Styles/Profile.css';
 
 function Profile() {
-  const initialProfileData = {
-    fullName: 'John Doe',
-    email: 'john@example.com',
-    phoneNumber: '1234567890',
-    aadharNumber: '1234 5678 9012',
-    panNumber: 'ABCDE1234F',
-    addressLine1: '123, Street Name',
-    addressLine2: 'Apartment Name',
-    district: 'District Name',
-    city: 'City Name',
-    state: 'State Name',
-    dob: '1990-01-01',
-    amount: '10000',
-  };
-
-  const [profileData, setProfileData] = useState({ ...initialProfileData });
+  const [profileData, setProfileData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [updatedProfileData, setUpdatedProfileData] = useState({});
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const userId = localStorage.getItem('userId');
+        const response = await axios.get(`http://localhost:8080/api/userdetails/${userId}`);
+        setProfileData(response.data);
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setProfileData((prevData) => ({
+    setUpdatedProfileData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
-  const handleUpdateProfile = () => {
-    setIsEditing(false);
-    setProfileData({ ...initialProfileData });
+  const handleEditProfile = () => {
+    setIsEditing(true);
+    setUpdatedProfileData(profileData);
+  };
+
+  const handleUpdateProfile = async () => {
+    try {
+      const userId = localStorage.getItem('userId');
+      const response = await axios.put(`http://localhost:8080/api/userdetails/${userId}`, updatedProfileData);
+      console.log('Profile updated successfully:', response.data);
+      setProfileData(updatedProfileData);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
   };
 
   return (
     <div className="prof" style={{ display: 'flex' }}>
       <Sidebar />
       <div className="profile-container" style={{ flex: 1, padding: '20px' }}>
-        <img
-          src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-          alt="Profile"
-          className="profile-image"
-        />
-        <h5>{initialProfileData.fullName}</h5>
-        <div className="profile-fields">
-          {Object.entries(profileData).map(([key, value]) => (
-            <div className="profile-field" key={key}>
-              <label>{key.toUpperCase()}</label>
+        {profileData && (
+          <>
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+              alt="Profile"
+              className="profile-image"
+            />
+            <h5>{profileData.fullName}</h5>
+            <div className="profile-fields">
+              {Object.entries(profileData).map(([key, value]) => (
+                <div className="profile-field" key={key}>
+                  <label>{key.toUpperCase()}</label>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      name={key}
+                      value={updatedProfileData[key] || ''}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    <div>{value}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="profile-actions">
               {isEditing ? (
-                <input
-                  type="text"
-                  name={key}
-                  value={value}
-                  onChange={handleInputChange}
-                />
+                <button className="update-btn" onClick={handleUpdateProfile}>
+                  Update
+                </button>
               ) : (
-                <div>{value}</div>
+                <button className="edit-btn" onClick={handleEditProfile}>
+                  Edit
+                </button>
               )}
             </div>
-          ))}
-        </div>
-        <div className="profile-actions">
-          {isEditing ? (
-            <button className="update-btn" onClick={handleUpdateProfile}>
-              Update
-            </button>
-          ) : (
-            <button className="edit-btn" onClick={() => setIsEditing(true)}>
-              Edit
-            </button>
-          )}
-        </div>
+          </>
+        )}
       </div>
     </div>
   );

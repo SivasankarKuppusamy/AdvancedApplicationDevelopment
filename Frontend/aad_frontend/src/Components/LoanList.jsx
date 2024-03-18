@@ -7,9 +7,9 @@ import axios from 'axios';
 
 const LoanExplorer = () => {
   const [banks, setBanks] = useState([]);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [isLoggedIn,setIsLoggedin]=useState(localStorage.getItem('isLoggedIn')==='true');
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -33,7 +33,7 @@ const LoanExplorer = () => {
 
   return (
     <div className="loan-list" style={{ display: 'flex', marginTop: '70px' }}>
-      <Sidebar />
+    {isLoggedIn ===true?  <Sidebar />:<></>}
       <div className="loan-explorer-container" style={{ flex: 1, padding: '20px' }}>
         <h1>Loan Explorer</h1>
         <TableContainer component={Paper}>
@@ -46,7 +46,7 @@ const LoanExplorer = () => {
                 <TableCell>Maximum Loan Amount</TableCell>
                 <TableCell>Description</TableCell>
                 <TableCell>Eligibility Criteria</TableCell>
-                <TableCell>Apply Now</TableCell> {/* New cell for Apply Now button */}
+                <TableCell>Apply Now</TableCell> 
               </TableRow>
             </TableHead>
             <TableBody>
@@ -60,7 +60,7 @@ const LoanExplorer = () => {
                     <TableCell>{scheme.description}</TableCell>
                     <TableCell>{scheme.eligibilityCriteria}</TableCell>
                     <TableCell>
-                      <Link to={`/new-application/${scheme.id}`}>Apply Now</Link> {/* Navigate to new-application page with scheme ID */}
+                      <Link to={`/new-application/${bank.id}/${scheme.id}`}>Apply Now</Link>
                     </TableCell>
                   </TableRow>
                 ))

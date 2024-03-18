@@ -1,6 +1,6 @@
 .sidebar {
     position: fixed;
-    max-width: 160px;
+    max-width: 190px;
     background-color: #f0f0f0;
     padding: 20px;
     min-height: 95vh;
@@ -9,15 +9,17 @@
     transition: width 0.3s ease;
     
   }
-  
+
   .sidebar.open {
     width: 260px;
   }
-  
+  .logo-close{
+    min-width: 50px;
+  }
   .sidebar-header {
     display: flex;
     align-items: center;
-    justify-content: flex-end; /* Align toggle button to the right */
+    justify-content: flex-end;
     margin-bottom: 20px;
     position: absolute;
     top: 0;
@@ -25,7 +27,9 @@
     right: 0;
     padding: 20px;
   }
-  
+  .logo-close:hover{
+    cursor: pointer;
+  }
   .toggle-button {
     cursor: pointer;
     margin-left: auto; 
@@ -40,7 +44,7 @@
   
   .menu-container.close{
     overflow: hidden;
-    padding-top: 40px;
+    padding-top: 70px;
     transition: padding-top 0.4s ease;
 
   }
@@ -49,15 +53,14 @@
     list-style-type: none;
     padding: 0;
     margin: 0;
+    
   }
   
   .sidebar-menu li {
     margin-bottom: 15px;
-
     padding: 9px;
     background-color: rgb(220, 220, 220);
     border-radius: 10px;
-
   }
   
   .sidebar-menu li a {
@@ -71,15 +74,22 @@
   .sidebar-menu li a.selected {
       color: #007bff;
     }
-    
+   
     .sidebar-menu li a:hover {
         color: blue;
   }
   
-  .logo {
+  .logo h5 {
     text-align: center;
+    text-transform: uppercase;
+    padding: 10px;
+    color: black;
+    font-size: large;
+    margin-top: 10px;
   }
-  
+  .logo-div{
+    display: flex;
+  }
   .sidebar .logo img {
     display: block;
     margin: 10px auto;
@@ -87,10 +97,5 @@
     height: 40px;
   }
   
-  .logo h5 {
-    margin-top: 10px;
-    color: black;
-    font-size: 16px;
-    margin: 0;
-  }
+ 
   

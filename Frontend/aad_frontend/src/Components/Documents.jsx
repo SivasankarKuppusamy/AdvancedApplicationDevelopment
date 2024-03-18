@@ -30,8 +30,7 @@ function Documents() {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log(formData);
-        // Add your submission logic here
-        // Reset form data
+
         setFormData({
             aadharCard: null,
             panCard: null,
@@ -75,8 +74,8 @@ function Documents() {
                         </div>
                        
                         <div className="form-group">
-                            <label htmlFor="addressProof">Address Proof:</label>
-                            <input type="file" id="addressProof" name="addressProof" onChange={handleChange} accept="image/*" />
+                            <label htmlFor="incomeProof">Income Proof:</label>
+                            <input type="file" id="incomeProof" name="incomeProof" onChange={handleChange} accept="image/*" />
                         </div>
                     </form>
                 </div>

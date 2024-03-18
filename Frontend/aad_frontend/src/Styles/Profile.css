@@ -4,11 +4,13 @@
 
   }
   .profile-container {
+    transition: margin-left 0.3s ease; 
+
     position: relative;
     max-width: 850px;
     height: auto;
     margin: 0 auto;
-    margin-left: 390px;
+    margin-left: 410px;
     padding: 40px;
     padding-bottom: 0px;
     margin-top: 30px;
@@ -113,4 +115,9 @@
   .edit-btn:hover {
     background-color: #218838;
   }
-  
+  .sidebar.close+.profile-container{
+    margin-left: 400px;
+      }
+      .sidebar.open + .profile-container {
+        margin-left: 450px; 
+      }

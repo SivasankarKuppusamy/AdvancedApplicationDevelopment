@@ -15,7 +15,7 @@
   display: flex;
   overflow: hidden;
   font-family: 'Inter', sans-serif;
-  flex-direction: column; /* stacks children vertically */
+  flex-direction: column; 
   align-items: center;
 }
 
@@ -75,7 +75,7 @@
   text-align: center;
   background: rgb(247, 248, 249);
   border-radius: 13px;
-  margin-right: 10%; /* Adjust as needed */
+  margin-right: 10%;
   display: flex;
 }
 
@@ -158,9 +158,9 @@ input[type="checkbox"] {
 
   .login-container,.login-content-container,.login-outer-container {
     display: flex;
-    flex-direction: column; /* stacks children vertically */
-    justify-content: center; /* vertically centers children */
-    align-items: center; /* horizontally centers children */
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
   }
 }
 

@@ -1,60 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import '../Styles/Loans.css';
 import LoanDetails from './LoanDetails';
+import axios from 'axios';
 
 function Loans() {
-  const applications = [
-    { 
-      id: 1, 
-      status: 'Pending',
-      fullName: 'John Doe',
-      loanType: 'Agricultural Loan',
-      amount: '$50,000',
-      bank: 'Farmers Bank',
-      applicationDate: '2024-03-16',
-      agriculturalDetail: 'Special interest rate for agricultural equipment purchases',
-      cropType: 'Wheat',
-      landSize: '100 acres',
-      requiredMachinery: 'Tractor, Harvester',
-    },
-    { 
-      id: 2, 
-      status: 'Approved',
-      fullName: 'Alice Smith',
-      loanType: 'Agricultural Loan',
-      amount: '$70,000',
-      bank: 'Harvest Credit Union',
-      applicationDate: '2024-03-15',
-      agriculturalDetail: 'Flexible repayment options tailored for seasonal income',
-      cropType: 'Corn',
-      landSize: '80 acres',
-      requiredMachinery: 'Irrigation system',
-      dueAmount: '$25,000', // Added due amount
-    },
-  ];
-  
-  const [selectedLoan, setSelectedLoan] = useState(applications[1]);
+  const [userLoans, setUserLoans] = useState([]);
+  const [selectedLoan, setSelectedLoan] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  const handleViewDetails = (loan) => {
+  useEffect(() => {
+    const fetchUserLoans = async () => {
+      try {
+        const userId = localStorage.getItem('userId');
+        const response = await axios.get(`http://localhost:8080/api/loans/d/${userId}`);
+        const loans = response.data;
+  console.log(loans)
+        const loansWithBankNames = await Promise.all(loans.map(async loan => {
+          const bankName = await fetchBankName(loan.bankid); 
+          return { ...loan, bank: bankName };
+        }));
+        console.log(loansWithBankNames)
+  
+        setUserLoans(loansWithBankNames);
+      } catch (error) {
+        console.error('Error fetching user loans:', error);
+      }
+    };
+  
+    fetchUserLoans();
+  }, []);
+  
+
+  const fetchBankName = async (bankId) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/bank/${bankId}`); 
+      console.log(response.data)
+      return response.data.name;
+    } catch (error) {
+      console.error('Error fetching bank name:', error);
+      return '';
+    }
+  };
+
+  const handleViewDetails = async (loan) => {
+    const bankName = await fetchBankName(loan.bankId);
     setSelectedLoan(loan);
     setIsModalOpen(true);
   };
-  
+
   const handlePay = (loan) => {
-    // Add your payment logic here
     alert(`Paid due amount of ${loan.dueAmount}`);
   };
-  
-  const agriculturalApplications = applications.filter(application => application.loanType === 'Agricultural Loan');
 
   return (
     <div className='loans-container'>
       <Sidebar />
       <div className='loans-content'>
-        <h2>Agricultural Loan Applications</h2>
+        <h2>Submitted Loan Applications</h2>
         <table className='application-table'>
           <thead>
             <tr>
@@ -68,7 +72,7 @@ function Loans() {
             </tr>
           </thead>
           <tbody>
-            {agriculturalApplications.map(application => (
+            {userLoans.map(application => (
               <tr key={application.id}>
                 <td>{application.id}</td>
                 <td>{application.status}</td>

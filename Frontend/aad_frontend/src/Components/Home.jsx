@@ -1,5 +1,6 @@
 import React from 'react';
 import '../Styles/Home.css'
+import { Link } from 'react-router-dom';
 const Home = () => {
   return (
     <div className="landing-page">
@@ -76,7 +77,7 @@ Benefit from competitive interest rates tailored for agricultural loans. Our rat
 
       <ul class="nav__ul">
         <li>
-          <a href="#">Crop Loan</a>
+          <Link to="loan-list">Crop Loan</Link>
         </li>
 
         <li>
@@ -84,7 +85,7 @@ Benefit from competitive interest rates tailored for agricultural loans. Our rat
         </li>
             
         <li>
-          <a href="#">Emi calculator</a>
+          <Link to='loan-calculator'>Emi calculator</Link>
         </li>
       </ul>
     </li>
@@ -94,7 +95,7 @@ Benefit from competitive interest rates tailored for agricultural loans. Our rat
       
       <ul class="nav__ul nav__ul--extra">
         <li>
-          <a href="#">Banks</a>
+        <Link to="loan-list">Bank</Link>
         </li>
         
         <li>
@@ -106,11 +107,11 @@ Benefit from competitive interest rates tailored for agricultural loans. Our rat
         </li>
         
         <li>
-          <a href="#">Login</a>
+        <Link to="/login">Login</Link>
         </li>
         
         <li>
-          <a href="#">Register</a>
+        <Link to="/register">Register</Link>
         </li>
         
         <li>

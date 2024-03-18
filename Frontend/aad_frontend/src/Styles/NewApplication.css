@@ -14,6 +14,7 @@
     margin-top: 70px;
   }
   .new-app{
+    transition: margin-left 0.3s ease; 
     margin-left: 170px;
 
   }
@@ -78,4 +79,9 @@
       width: 100%;
     }
   }
-  
+  .sidebar.close+.new-app{
+    margin-left: 110px;
+      }
+      .sidebar.open + .new-app {
+        margin-left: 210px; 
+      }

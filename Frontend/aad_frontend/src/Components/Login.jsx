@@ -39,9 +39,24 @@ function LoginPage() {
       const userId = response.data.id;
 
       localStorage.setItem('userId', userId);
+      localStorage.setItem('userName', response.data.name);
       localStorage.setItem('isLoggedIn', true);
+      if(response.data.role==='user'){
+      localStorage.setItem('userRole','user')
 
-      nav('/user');
+      if(response.data.isFilled){
+
+        nav('/user');
+      }
+      else{
+        alert("Kindly Update your Details")
+        nav('/profile')
+      }
+    }
+    else if(response.data.role==='admin'){
+      localStorage.setItem('userRole','admin')
+      nav('/admin-dashboard')
+    }
     } catch (error) {
       alert("Wrong Credentials");
       console.error('Login failed:', error);

@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import '../Styles/NewApplication.css';
+import axios from 'axios';
 
 function NewApplication() {
   const [formData, setFormData] = useState({
@@ -10,20 +12,65 @@ function NewApplication() {
     aadharNumber: '',
     panNumber: '',
     addressLine1: '',
-    addressLine2: '',
-    district: '',
-    city: '',
-    state: '',
     dob: '',
     amount: '',
     duration: '',
     loanType: '',
     collateralDetails: '',
     additionalDocument: '',
+    cropType:'',
+    landSize:'',
+    requiredMachinery:'',
     agreeToTerms: false,
   });
 
-  const [formErrors, setFormErrors] = useState({});
+  const { schemeId } = useParams();
+  const { bankid } = useParams();
+  const [interestRate, setInterestRate] = useState(0);
+  const [monthlyPayment, setMonthlyPayment] = useState(0);
+  
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userId = localStorage.getItem('userId');
+        const response = await axios.get(`http://localhost:8080/api/userdetails/${userId}`);
+        const userData = response.data;
+        setFormData({
+          ...formData,
+          fullName: userData.fullName || '',
+          email: userData.email || '',
+          phoneNumber: userData.phoneNumber || '',
+          aadharNumber: userData.aadharNumber || '',
+          panNumber: userData.panNumber || '',
+          addressLine1: userData.addressLine1 || '',
+          addressLine2: userData.addressLine2 || '',
+          district: userData.district || '',
+          city: userData.city || '',
+          state: userData.state || '',
+          dob: userData.dob || '',
+        });
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    const fetchSchemeInterestRate = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/bank-schemes/${schemeId}`);
+        console.log(response);
+        const schemeData = response.data;
+        setInterestRate(schemeData.interestRate);
+      } catch (error) {
+        console.error('Error fetching scheme interest rate:', error);
+      }
+    };
+
+    fetchSchemeInterestRate();
+  }, [schemeId]); 
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -35,45 +82,44 @@ function NewApplication() {
     }));
   };
 
-  const handleSubmit = (e) => {
+const nav=useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const errors = validateForm(formData);
-    if (Object.keys(errors).length === 0) {
-      console.log(formData);
-      setFormData({
-        fullName: '',
-        email: '',
-        phoneNumber: '',
-        aadharNumber: '',
-        panNumber: '',
-        addressLine1: '',
-        addressLine2: '',
-        district: '',
-        city: '',
-        state: '',
-        dob: '',
-        amount: '',
-        duration: '',
-        loanType: '',
-        collateralDetails: '',
-        additionalDocument: '',
-        agreeToTerms: false,
+    try {
+      const interest = interestRate / 100;
+      const loanAmount = parseFloat(formData.amount);
+      const duration = parseInt(formData.duration);
+      const monthlyInterest = interest / 12;
+      const numPayments = duration * 12;
+      console.log(numPayments)
+      console.log(monthlyInterest)
+      const numerator = monthlyInterest * Math.pow(1 + monthlyInterest, numPayments);
+      const denominator = Math.pow(1 + monthlyInterest, numPayments) - 1;
+  
+      const monthlyPayment = (loanAmount * (numerator / denominator)).toFixed(2);
+      setMonthlyPayment(monthlyPayment);
+      const response = await axios.post('http://localhost:8080/api/loans', {
+        userId: localStorage.getItem('userId'),
+        schemeId: schemeId,
+        fullName: formData.fullName,
+        applicationDate: new Date(),
+        cropType: formData.cropType,
+        landSize: formData.landSize,
+        loanType: formData.loanType,
+        amount: formData.amount,
+        monthlyPayment:monthlyPayment,
+        bankid:bankid,
+        dueAmount: 0,
+        requiredMachinery: formData.requiredMachinery,
+        status: 'Pending',
       });
-      setFormErrors({});
-    } else {
-      setFormErrors(errors);
+      nav('/documents')
+      console.log('Application submitted successfully:', response.data);
+    } catch (error) {
+      console.error('Error submitting application:', error);
     }
-  };
-
-  const validateForm = (data) => {
-    let errors = {};
-
-    if (!data.fullName.trim()) {
-      errors.fullName = 'Full Name is required';
-    }
-
-    return errors;
   };
 
   return (
@@ -136,42 +182,6 @@ function NewApplication() {
                     </td>
                   </tr>
                   <tr>
-                    <td>District:</td>
-                    <td>
-                      <input
-                        type="text"
-                        name="district"
-                        value={formData.district}
-                        onChange={handleChange}
-                        required
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>City:</td>
-                    <td>
-                      <input
-                        type="text"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleChange}
-                        required
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>State:</td>
-                    <td>
-                      <input
-                        type="text"
-                        name="state"
-                        value={formData.state}
-                        onChange={handleChange}
-                        required
-                      />
-                    </td>
-                  </tr>
-                  <tr>
                     <td>Date of Birth:</td>
                     <td>
                       <input
@@ -183,14 +193,6 @@ function NewApplication() {
                       />
                     </td>
                   </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div style={{ width: '48%' }}>
-              <table>
-                <tbody>
-                  <h2>Documents</h2>
                   <tr>
                     <td>Aadhar Number:</td>
                     <td>
@@ -215,21 +217,13 @@ function NewApplication() {
                       />
                     </td>
                   </tr>
-                  <tr>
-                    <td>Additional Document:</td>
-                    <td>
-                      <input
-                        type="text"
-                        name="additionalDocument"
-                        value={formData.additionalDocument}
-                        onChange={handleChange}
-                        required
-                      />
-                      {formErrors.additionalDocument && (
-                        <span className="error">{formErrors.additionalDocument}</span>
-                      )}
-                    </td>
-                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style={{ width: '48%' }}>
+              <table>
+                <tbody>
                   <h2>Loan Details</h2>
                   <tr>
                     <td>Loan Amount:</td>
@@ -279,6 +273,42 @@ function NewApplication() {
                         value={formData.collateralDetails}
                         onChange={handleChange}
                       ></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Crop Type:</td>
+                    <td>
+                      <input
+                        type="text"
+                        name="cropType"
+                        value={formData.cropType}
+                        onChange={handleChange}
+                        required
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Land Size:</td>
+                    <td>
+                      <input
+                        type="text"
+                        name="landSize"
+                        value={formData.landSize}
+                        onChange={handleChange}
+                        required
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Required Machinery:</td>
+                    <td>
+                      <input
+                        type="text"
+                        name="requiredMachinery"
+                        value={formData.requiredMachinery}
+                        onChange={handleChange}
+                        required
+                      />
                     </td>
                   </tr>
                 </tbody>
