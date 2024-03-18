@@ -10,6 +10,13 @@
     border: 1px solid black;
     padding-bottom: 0px;
   }
+  .new-application{
+    margin-top: 70px;
+  }
+  .new-app{
+    margin-left: 170px;
+
+  }
   .new-application h1 {
     font-size: large;
     text-align: left;

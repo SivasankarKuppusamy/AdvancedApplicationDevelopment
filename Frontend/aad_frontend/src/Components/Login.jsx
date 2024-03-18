@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../Styles/Login.css';
 import logo from "../assets/logo.jpg"
 
@@ -10,29 +11,40 @@ function LoginPage() {
     email: '',
     password: '',
   });
+  const nav = useNavigate();
 
-  const validate = (e) => {
+  const validate = async (e) => {
     e.preventDefault();
     const errors = {};
 
-    if (email.length === 0) {
+    if (email.trim() === '') {
       errors.email = 'Email is required';
     }
 
-    if (password.length === 0) {
+    if (password.trim() === '') {
       errors.password = 'Password is required';
     }
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
-    } else {
-      setFormErrors({
-        email: '',
-        password: '',
+    }
+
+    try {
+      const response = await axios.post('http://localhost:8080/api/login', {
+        email,
+        password
       });
-      
-      console.log('Logging in...');
+
+      const userId = response.data.id;
+
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('isLoggedIn', true);
+
+      nav('/user');
+    } catch (error) {
+      alert("Wrong Credentials");
+      console.error('Login failed:', error);
     }
   };
 

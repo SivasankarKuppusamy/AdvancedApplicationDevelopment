@@ -1,52 +1,96 @@
-
-.sidebar ul,.sidebar li{
-    color: black;
-    background-color: transparent;
-}
 .sidebar {
-    width: 200px;
+    position: fixed;
+    max-width: 160px;
     background-color: #f0f0f0;
     padding: 20px;
-    margin-top:2px;
-    height: 95vh;
-    border-right: 2px solid #ccc; /* Adjust border color and width as needed */
+    min-height: 95vh;
+    max-height: auto;
+    border-right: 2px solid #ccc;
+    transition: width 0.3s ease;
+    
+  }
+  
+  .sidebar.open {
+    width: 260px;
+  }
+  
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Align toggle button to the right */
+    margin-bottom: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+  }
+  
+  .toggle-button {
+    cursor: pointer;
+    margin-left: auto; 
+  }
+  
+  .menu-container {
+    overflow: hidden;
+    padding-top: 90px;
+    transition: padding-top 0.4s ease;
 
   }
- .sidebar .logo{
-    text-align: center;
- }
- .sidebar h5{
-    text-align: center;
-    color: black;
+  
+  .menu-container.close{
+    overflow: hidden;
+    padding-top: 40px;
+    transition: padding-top 0.4s ease;
 
- }
-  .sidebar .logo img {
-      width: 34%;
-      height: 40px;
-      margin-left: 0;
-      margin-bottom: 10px;
-    }
-    
+  }
+  
   .sidebar-menu {
     list-style-type: none;
     padding: 0;
-    margin-top: 30px;
-}
+    margin: 0;
+  }
+  
+  .sidebar-menu li {
+    margin-bottom: 15px;
 
+    padding: 9px;
+    background-color: rgb(220, 220, 220);
+    border-radius: 10px;
 
-.sidebar-menu li {
-    margin-bottom: 10px;
-    padding: 10px;
-}
-
-.sidebar-menu li a {
+  }
+  
+  .sidebar-menu li a {
     text-decoration: none;
     color: #333;
-}
-
-.sidebar-menu li a:hover {
-    color: #007bff;
-}
-.sidebar-menu li a.selected {
-    color: blue;    
+    display: flex;
+    padding: 5px;
+    align-items: center;
   }
+  
+  .sidebar-menu li a.selected {
+      color: #007bff;
+    }
+    
+    .sidebar-menu li a:hover {
+        color: blue;
+  }
+  
+  .logo {
+    text-align: center;
+  }
+  
+  .sidebar .logo img {
+    display: block;
+    margin: 10px auto;
+    width: 34%;
+    height: 40px;
+  }
+  
+  .logo h5 {
+    margin-top: 10px;
+    color: black;
+    font-size: 16px;
+    margin: 0;
+  }
+  

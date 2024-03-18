@@ -1,11 +1,13 @@
 .user-dash {
     display: flex;
-    background-color: #f0f0f0;
-    top: 0;
+    margin-top: 70px;
 }
 .user-dash h3{
     text-transform: uppercase;
     margin-top: 9px;
+}
+.user-dashboard{
+    margin-left: 170px;
 }
   
 .top{

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../Styles/Login.css';
 
 function RegisterPage() {
@@ -8,6 +9,7 @@ function RegisterPage() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [agree, setAgree] = useState(false);
+  const nav=useNavigate();
   const [formErrors, setFormErrors] = useState({
     name: '',
     email: '',
@@ -16,28 +18,29 @@ function RegisterPage() {
     agree: '',
   });
 
-  const validate = (e) => {
+  const validate = async (e) => {
     e.preventDefault();
-    const errors = {};
 
-    if (name.trim() === '') {
+    // Client-side validation
+    const errors = {};
+    if (!name.trim()) {
       errors.name = 'Name is required';
     }
-
-    if (email.trim() === '') {
+    if (!email.trim()) {
       errors.email = 'Email is required';
+    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+      errors.email = 'Invalid email format';
     }
-
-    if (password.trim() === '') {
+    if (!password.trim()) {
       errors.password = 'Password is required';
+    } else if (password.length < 8) {
+      errors.password = 'Password must be at least 8 characters long';
     }
-
-    if (confirmPassword.trim() === '') {
+    if (!confirmPassword.trim()) {
       errors.confirmPassword = 'Please confirm password';
     } else if (password !== confirmPassword) {
       errors.confirmPassword = 'Passwords do not match';
     }
-
     if (!agree) {
       errors.agree = 'Please agree to the terms';
     }
@@ -45,42 +48,24 @@ function RegisterPage() {
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
-    } else {
-      setFormErrors({
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        agree: '',
-      });
-      
-      console.log('Registering...');
     }
-  };
 
-  const handleNameChange = (e) => {
-    setName(e.target.value);
-    setFormErrors({ ...formErrors, name: '' });
-  };
+    try {
+      const response = await axios.post('http://localhost:8080/api/users', {
+        name,
+        email,
+        password,
+      });
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-    setFormErrors({ ...formErrors, email: '' });
-  };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-    setFormErrors({ ...formErrors, password: '' });
-  };
-
-  const handleConfirmPasswordChange = (e) => {
-    setConfirmPassword(e.target.value);
-    setFormErrors({ ...formErrors, confirmPassword: '' });
-  };
-
-  const handleAgreeChange = (e) => {
-    setAgree(e.target.checked);
-    setFormErrors({ ...formErrors, agree: '' });
+      console.log('Registration successful:', response.data);
+      nav('/login')
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        alert('There was an issue with your registration. Please check your details and try again.');
+      } else {
+        console.error('Registration failed:', error.response.data.errors);
+      }
+    }
   };
 
   return (
@@ -92,42 +77,46 @@ function RegisterPage() {
             <br />
             <br />
             <br />
-            {/* <img alt="logo" src="https://lwa.rajasthan.gov.in/images/loan-bg.png" /> */}
             <h2>REGISTER &#x2764;</h2>
             <form>
               <div>
                 <input
-                  onChange={handleNameChange}
+                  onChange={(e) => setName(e.target.value)}
                   value={name}
                   type="text"
                   placeholder="Name"
+                  required
                 />
                 {formErrors.name && <p className="error">{formErrors.name}</p>}
               </div>
               <div>
                 <input
-                  onChange={handleEmailChange}
+                  onChange={(e) => setEmail(e.target.value)}
                   value={email}
                   type="email"
                   placeholder="Email"
+                  required
                 />
                 {formErrors.email && <p className="error">{formErrors.email}</p>}
               </div>
               <div>
                 <input
-                  onChange={handlePasswordChange}
+                  onChange={(e) => setPassword(e.target.value)}
                   value={password}
                   type="password"
                   placeholder="Password"
+                  minLength="8"
+                  required
                 />
                 {formErrors.password && <p className="error">{formErrors.password}</p>}
               </div>
               <div>
                 <input
-                  onChange={handleConfirmPasswordChange}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   value={confirmPassword}
                   type="password"
                   placeholder="Confirm Password"
+                  required
                 />
                 {formErrors.confirmPassword && <p className="error">{formErrors.confirmPassword}</p>}
               </div>
@@ -136,7 +125,8 @@ function RegisterPage() {
                   <input
                     type="checkbox"
                     checked={agree}
-                    onChange={handleAgreeChange}
+                    onChange={(e) => setAgree(e.target.checked)}
+                    required
                   />
                   I agree to the terms
                 </label>

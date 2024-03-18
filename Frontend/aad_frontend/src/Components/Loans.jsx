@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import '../Styles/Loans.css'; // Import your CSS file for styling
+import '../Styles/Loans.css';
+import LoanDetails from './LoanDetails';
 
 function Loans() {
   const applications = [
@@ -13,6 +14,10 @@ function Loans() {
       amount: '$50,000',
       bank: 'Farmers Bank',
       applicationDate: '2024-03-16',
+      agriculturalDetail: 'Special interest rate for agricultural equipment purchases',
+      cropType: 'Wheat',
+      landSize: '100 acres',
+      requiredMachinery: 'Tractor, Harvester',
     },
     { 
       id: 2, 
@@ -22,11 +27,27 @@ function Loans() {
       amount: '$70,000',
       bank: 'Harvest Credit Union',
       applicationDate: '2024-03-15',
+      agriculturalDetail: 'Flexible repayment options tailored for seasonal income',
+      cropType: 'Corn',
+      landSize: '80 acres',
+      requiredMachinery: 'Irrigation system',
+      dueAmount: '$25,000', // Added due amount
     },
-    // Add more agricultural loan applications here
   ];
-
-  // Filter out non-agricultural loan applications
+  
+  const [selectedLoan, setSelectedLoan] = useState(applications[1]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const handleViewDetails = (loan) => {
+    setSelectedLoan(loan);
+    setIsModalOpen(true);
+  };
+  
+  const handlePay = (loan) => {
+    // Add your payment logic here
+    alert(`Paid due amount of ${loan.dueAmount}`);
+  };
+  
   const agriculturalApplications = applications.filter(application => application.loanType === 'Agricultural Loan');
 
   return (
@@ -56,16 +77,17 @@ function Loans() {
                 <td>{application.bank}</td>
                 <td>{application.applicationDate}</td>
                 <td>
-                  <Link to={`/application/${application.id}`} className='view-button'>View</Link>
+                  <button onClick={() => handleViewDetails(application)} className='view-button'>View</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <LoanDetails isOpen={isModalOpen} handleClose={() => setIsModalOpen(false)} loan={selectedLoan} />
+        
         <div className='button-container'>
-          <Link to="/new-application" className='new-application-button'>New Application</Link>
-          <Link to="/loan-types" className='loan-types-button'>Explore Loan Types</Link>
-          <Link to="/loan-requirements" className='loan-requirements-button'>Loan Requirements</Link>
+          <Link to="/loan-list" className='new-application-button'>New Application</Link>
+          <Link to="https://www.onlineservices.nsdl.com/paam/endUserRegisterContact.html" target='blank' className='loan-requirements-button'>Apply For new PAN</Link>
         </div>
       </div>
     </div>

@@ -9,17 +9,17 @@ body
   background-color: transparent;
 }
 .nav {
-  background-color:transparent;
-  height: 50px;
+  background-color:white;
+  position: fixed;
+  height: 70px;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1;
   margin-bottom: 10px;
-  /* box-shadow: 2px 2px #e0e0e0; */
-  justify-content: space-between; /* Aligns items to the start and end */
+  box-shadow: 1px 1px #e0e0e0;
+  justify-content: space-between; 
   align-items: center;
-  /* background-image: url('https://developer.android.com/static/images/design/ui/mobile/system-bars-hero.png'); */
 }
 
 .nav a ,.services,.partners{
@@ -36,11 +36,14 @@ body
   left: 70px;
   padding: 8px 0;
   background-color:transparent;
-  /* box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); */
   border-radius: 4px;
-  display: none; /* Initially hide the dropdown menu */
+  display: none;
 }
-
+.top-bar h4{
+  color: black;
+  text-align: center;
+  text-transform: uppercase;
+}
 .menu-list  {
   list-style: none;
   padding: 0;

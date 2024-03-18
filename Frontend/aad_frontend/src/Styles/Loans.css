@@ -2,9 +2,11 @@
 
 .loans-container {
     display: flex;
+    margin-top: 70px;
   }
   
   .loans-content {
+    margin-left: 170px;
     flex: 1;
     padding: 20px;
   }

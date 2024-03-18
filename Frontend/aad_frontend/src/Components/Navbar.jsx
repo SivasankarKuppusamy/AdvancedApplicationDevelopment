@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../Styles/Navbar.css';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.jpg'
 const Navbar = () => {
+const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  useEffect(() => {
+    const loggedInStatus = localStorage.getItem('isLoggedIn');
+    setIsLoggedIn(loggedInStatus === 'true');
+  }, []);
   return (
     <div className="nav">
       <header>
@@ -43,13 +48,17 @@ const Navbar = () => {
                   <li className="li-elements">
                     <Link to="/about">About</Link>
                   </li>
+                  {isLoggedIn ? <>
+                    <li className="li-elements"> <Link to='/profile'> username</Link></li>
+                  </>:<>
                   <li className="li-elements">
                     <Link to="/register">Register</Link>
                   </li>
-                  
                   <li className="li-elements">
                     <Link to="/login">Login</Link>
                   </li>
+                  </>}
+
                 </ul>
           </div>
         </div>
