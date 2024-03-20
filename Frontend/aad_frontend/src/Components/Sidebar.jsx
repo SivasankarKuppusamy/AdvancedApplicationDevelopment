@@ -140,6 +140,7 @@ const Sidebar = () => {
       localStorage.setItem('isLoggedIn', false);
       localStorage.setItem('userName', '');
       localStorage.setItem('userRole', '');
+      localStorage.setItem('userId');
       nav('/');
     } else {
     }

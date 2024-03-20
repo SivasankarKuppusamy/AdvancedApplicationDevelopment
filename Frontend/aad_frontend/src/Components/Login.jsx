@@ -103,6 +103,7 @@ function LoginPage() {
                 />
                 {formErrors.password && <p className="error">{formErrors.password}</p>}
               </div>
+              <Link className='register-link' style={{textAlign:'left',color:'blue'}} to="/forget">Forget Password ? </Link>
               <button onClick={validate} type="submit">Login</button>
             </form>
 

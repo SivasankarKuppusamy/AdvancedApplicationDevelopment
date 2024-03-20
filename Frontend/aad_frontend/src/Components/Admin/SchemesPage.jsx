@@ -20,7 +20,21 @@ const SchemesPage = () => {
     description: '',
     eligibilityCriteria: ''
   });
+  const [banks, setBanks] = useState([]); 
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const banksResponse = await axios.get('http://localhost:8080/bank');
+        setBanks(banksResponse.data);
+      } catch (error) {
+        console.error('Error fetching banks:', error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
   useEffect(() => {
     const fetchSchemes = async () => {
       try {
@@ -68,7 +82,7 @@ const SchemesPage = () => {
 
   const handleAddScheme = async () => {
     try {
-      await axios.post('http://localhost:8080/bank-schemes/', newSchemeData);
+      await axios.post('http://localhost:8080/bank-schemes', newSchemeData);
       setOpenAddSchemeDialog(false);
       setNewSchemeData({
         bankid: '',
@@ -252,24 +266,24 @@ const SchemesPage = () => {
             value={newSchemeData.eligibilityCriteria}
             onChange={handleNewSchemeDataChange}
           />
-          <FormControl style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} fullWidth>
-            <InputLabel id="bankid-label">Bank</InputLabel>
-            <Select
-              style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
-              labelId="bankid-label"
-              id="bankid"
-              name="bankid"
-              value={newSchemeData.bankid}
-              onChange={handleNewSchemeDataChange}
-              fullWidth
-            >
-              {schemes.map(scheme => (
-                <MenuItem key={scheme.id} value={scheme.bankid} style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>
-                  {scheme.bankName}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        <FormControl style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} fullWidth>
+  <InputLabel id="bankid-label">Bank</InputLabel>
+  <Select
+    style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
+    labelId="bankid-label"
+    id="bankid"
+    name="bankid"
+    value={newSchemeData.bankid}
+    onChange={handleNewSchemeDataChange}
+    fullWidth
+  >
+    {banks.map(bank => (
+      <MenuItem key={bank.id} value={bank.id} style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>
+        {bank.name}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
         </DialogContent>
         <DialogActions>
           <Button style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} onClick={handleCloseAddSchemeDialog}>Cancel</Button>

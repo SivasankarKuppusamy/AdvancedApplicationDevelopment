@@ -13,7 +13,7 @@ import './AdminDash.css'
           const loansResponse = await axios.get('http://localhost:8080/api/loans');
           const schemesResponse = await axios.get('http://localhost:8080/bank-schemes');
           const usersResponse = await axios.get('http://localhost:8080/api/users');
-          const banksResponse = await axios.get('http://localhost:8080/bank/');
+          const banksResponse = await axios.get('http://localhost:8080/bank');
 
           setDashboardData({
             loans: loansResponse.data,

@@ -27,7 +27,7 @@ const BanksPage = () => {
   useEffect(() => {
     const fetchBanks = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/bank/');
+        const response = await axios.get('http://localhost:8080/bank');
         setBanks(response.data);
       } catch (error) {
         console.error('Error fetching banks:', error);
@@ -66,14 +66,14 @@ const BanksPage = () => {
 
   const handleAddBank = async () => {
     try {
-      await axios.post('http://localhost:8080/bank/', newBankData);
+      await axios.post('http://localhost:8080/bank', newBankData);
       setOpenAddBankDialog(false);
       setNewBankData({
         name: '',
         username: '',
         password: ''
       });
-      const response = await axios.get('http://localhost:8080/bank/');
+      const response = await axios.get('http://localhost:8080/bank');
       setBanks(response.data);
     } catch (error) {
       console.error('Error adding bank:', error);
@@ -84,7 +84,7 @@ const BanksPage = () => {
     try {
       await axios.put(`http://localhost:8080/bank/${editedBankData.id}`, editedBankData);
       setOpenEditBankDialog(false);
-      const response = await axios.get('http://localhost:8080/bank/');
+      const response = await axios.get('http://localhost:8080/bank');
       setBanks(response.data);
     } catch (error) {
       console.error('Error editing bank:', error);

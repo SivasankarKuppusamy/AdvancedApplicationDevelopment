@@ -15,6 +15,7 @@ import BanksPage from './Components/Admin/BanksPage';
 import SchemesPage from './Components/Admin/SchemesPage';
 import LoansPage from './Components/Admin/LoansPage';
 import AgriLoanFAQ from './Components/AgriLoanFaq';
+import ForgetPasswordPage from './Components/ForgetPassword';
 
 const Loans = React.lazy(() => import('./Components/Loans'));
 const NewApplication = React.lazy(() => import('./Components/NewApplication'));
@@ -41,6 +42,7 @@ function App() {
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/users" element={<UsersPage />} />
           <Route path="/banks" element={<BanksPage />} />
+          <Route path="/forget" element={<ForgetPasswordPage />} />
           <Route path="/schemes" element={<SchemesPage />} />
           <Route path="/all-loans" element={<LoansPage />} />
           <Route path="/faq" element={<AgriLoanFAQ />} />
