@@ -1,13 +1,15 @@
 package com.aad.agritech.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.aad.agritech.Dto.LoginRequest;
-import com.aad.agritech.Dto.UpdatePasswordRequest;
 import com.aad.agritech.Model.Users;
 import com.aad.agritech.Repository.UserRepository;
 
@@ -17,17 +19,20 @@ public class UserService {
     @Autowired
     private UserRepository userRepo;
 
-    public ResponseEntity<?> updatePassword(UpdatePasswordRequest request) {
-        Users user = userRepo.findByEmail(request.getEmail());
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("User not found with email: " + request.getEmail());
+     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public boolean existsByEmail(String email) {
+        return userRepo.existsByEmail(email);
+    }
+
+    public ResponseEntity<Users> createUser(Users user) {
+        if (existsByEmail(user.getEmail())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
-
-        user.setPassword(request.getNewPassword());
-        userRepo.save(user);
-
-        return ResponseEntity.ok("Password updated successfully");
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Users createdUser = userRepo.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     public ResponseEntity<List<Users>> getAllUsers() {
@@ -40,14 +45,6 @@ public class UserService {
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
     }
 
-    public ResponseEntity<Users> createUser(Users user) {
-        try {
-            Users createdUser = userRepo.save(user);
-            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-    }
 
     public ResponseEntity<Void> deleteUser(Long id) {
         if (userRepo.existsById(id)) {
@@ -71,17 +68,9 @@ public class UserService {
                 })
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with id: " + id));
     }
-     public ResponseEntity<Users> login(LoginRequest loginRequest) {
-        String email = loginRequest.getEmail();
-        String password = loginRequest.getPassword();
-        
-        Users user = userRepo.findByEmail(email);
-        
-        if (user != null && user.getPassword().equals(password)) {
-            return ResponseEntity.ok().body(user);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-    }
+
+  
+    
+   
 }
 

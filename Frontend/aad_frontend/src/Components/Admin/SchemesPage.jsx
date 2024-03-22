@@ -12,6 +12,7 @@ const SchemesPage = () => {
   const [orderBy, setOrderBy] = useState('schemeName');
   const [order, setOrder] = useState('asc');
   const [openAddSchemeDialog, setOpenAddSchemeDialog] = useState(false);
+  const [openEditSchemeDialog, setOpenEditSchemeDialog] = useState(false);
   const [newSchemeData, setNewSchemeData] = useState({
     bankid: '',
     schemeName: '',
@@ -20,27 +21,28 @@ const SchemesPage = () => {
     description: '',
     eligibilityCriteria: ''
   });
-  const [banks, setBanks] = useState([]); 
+  const [editedSchemeData, setEditedSchemeData] = useState({ ...newSchemeData });
+  const [banks, setBanks] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const banksResponse = await axios.get('http://localhost:8080/bank');
+        const banksResponse = await axios.get('http://localhost:8080/bank', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
         setBanks(banksResponse.data);
       } catch (error) {
         console.error('Error fetching banks:', error);
       }
     };
-  
+
     fetchData();
   }, []);
-  
+
   useEffect(() => {
     const fetchSchemes = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/bank-schemes');
+        const response = await axios.get('http://localhost:8080/bank-schemes', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
         const schemesData = await Promise.all(response.data.map(async (scheme) => {
-          const bankResponse = await axios.get(`http://localhost:8080/bank/${scheme.bankid}`);
+          const bankResponse = await axios.get(`http://localhost:8080/bank/${scheme.bankid}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
           const bankName = bankResponse.data.name;
           return { ...scheme, bankName };
         }));
@@ -82,7 +84,7 @@ const SchemesPage = () => {
 
   const handleAddScheme = async () => {
     try {
-      await axios.post('http://localhost:8080/bank-schemes', newSchemeData);
+      await axios.post('http://localhost:8080/bank-schemes', newSchemeData, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
       setOpenAddSchemeDialog(false);
       setNewSchemeData({
         bankid: '',
@@ -92,9 +94,9 @@ const SchemesPage = () => {
         description: '',
         eligibilityCriteria: ''
       });
-      const response = await axios.get('http://localhost:8080/bank-schemes');
+      const response = await axios.get('http://localhost:8080/bank-schemes', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
       const schemesData = await Promise.all(response.data.map(async (scheme) => {
-        const bankResponse = await axios.get(`http://localhost:8080/bank/${scheme.bankid}`);
+        const bankResponse = await axios.get(`http://localhost:8080/bank/${scheme.bankid}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
         const bankName = bankResponse.data.name;
         return { ...scheme, bankName };
       }));
@@ -120,21 +122,51 @@ const SchemesPage = () => {
     });
   };
 
+  const handleOpenEditSchemeDialog = (scheme) => {
+    setEditedSchemeData(scheme);
+    setOpenEditSchemeDialog(true);
+  };
+
+  const handleCloseEditSchemeDialog = () => {
+    setOpenEditSchemeDialog(false);
+  };
+
+  const handleEditedSchemeDataChange = (event) => {
+    const { name, value } = event.target;
+    setEditedSchemeData({
+      ...editedSchemeData,
+      [name]: value
+    });
+  };
+
+  const handleEditScheme = async () => {
+    try {
+      await axios.put(`http://localhost:8080/bank-schemes/${editedSchemeData.id}`, editedSchemeData, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+      setOpenEditSchemeDialog(false);
+      const updatedSchemes = schemes.map(scheme =>
+        scheme.id === editedSchemeData.id ? { ...scheme, ...editedSchemeData } : scheme
+      );
+      setSchemes(updatedSchemes);
+    } catch (error) {
+      console.error('Error editing scheme:', error);
+    }
+  };
+
   return (
     <div className='users-div'>
       <Sidebar />
       <div className='users-content' style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>
-        <Container maxWidth="lg" style={{ marginTop: '94px' , minWidth:'100%'}}>
-          <Grid container spacing={3} style={{display:'flex',width:'100%'}}>
-            <Grid item xs={12} style={{ marginBottom: '20px',display:'flex',justifyContent:'space-between' }}>
-          <Typography variant="h4" style={{ marginTop:'30px',fontSize:'xx-large',fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} gutterBottom>
-            SCHEMES LIST
-          </Typography>
-              <Button  style={{maxHeight:'40px',marginTop:'30px',fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif'}} variant="outlined" color="primary" onClick={handleOpenAddSchemeDialog}>
+        <Container maxWidth="lg" style={{ marginTop: '94px', minWidth: '100%' }}>
+          <Grid container spacing={3} style={{ display: 'flex', width: '100%' }}>
+            <Grid item xs={12} style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
+              <Typography variant="h4" style={{ marginTop: '30px', fontSize: 'xx-large', fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} gutterBottom>
+                SCHEMES LIST
+              </Typography>
+              <Button style={{ maxHeight: '40px', marginTop: '30px', fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} variant="outlined" color="primary" onClick={handleOpenAddSchemeDialog}>
                 Add Scheme
               </Button>
             </Grid>
-            <Grid item xs={12}>
+            <Grid  item xs={12}>
               <Paper elevation={3} style={{ padding: '20px', minHeight: '300px' }}>
                 <Table>
                   <TableHead>
@@ -193,6 +225,7 @@ const SchemesPage = () => {
                         <TableCell style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>{scheme.bankName}</TableCell>
                         <TableCell style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>
                           <Button style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} color="error" onClick={() => handleDeleteScheme(scheme.id)}>Delete</Button>
+                          <Button style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} color="primary" onClick={() => handleOpenEditSchemeDialog(scheme)}>Edit</Button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -216,7 +249,7 @@ const SchemesPage = () => {
       <Dialog open={openAddSchemeDialog} onClose={handleCloseAddSchemeDialog}>
         <DialogTitle style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>Add Scheme</DialogTitle>
         <DialogContent style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>
-          <TextField
+        <TextField
             style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
             margin="dense"
             id="schemeName"
@@ -290,8 +323,86 @@ const SchemesPage = () => {
           <Button style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} onClick={handleAddScheme} color="primary">Add</Button>
         </DialogActions>
       </Dialog>
+      <Dialog open={openEditSchemeDialog} onClose={handleCloseEditSchemeDialog}>
+        <DialogTitle style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>Edit Scheme</DialogTitle>
+        <DialogContent style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>
+        <TextField
+            style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
+            margin="dense"
+            id="schemeName"
+            name="schemeName"
+            label="Scheme Name"
+            fullWidth
+            value={editedSchemeData.schemeName}
+            onChange={handleEditedSchemeDataChange}
+          />
+          <TextField
+            style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
+            margin="dense"
+            id="interestRate"
+            name="interestRate"
+            label="Interest Rate"
+            fullWidth
+            value={editedSchemeData.interestRate}
+            onChange={handleEditedSchemeDataChange}
+          />
+          <TextField
+            style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
+            margin="dense"
+            id="maximumLoanAmount"
+            name="maximumLoanAmount"
+            label="Maximum Loan Amount"
+            fullWidth
+            value={editedSchemeData.maximumLoanAmount}
+            onChange={handleEditedSchemeDataChange}
+          />
+          <TextField
+            style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
+            margin="dense"
+            id="description"
+            name="description"
+            label="Description"
+            fullWidth
+            value={editedSchemeData.description}
+            onChange={handleEditedSchemeDataChange}
+          />
+          <TextField
+            style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
+            margin="dense"
+            id="eligibilityCriteria"
+            name="eligibilityCriteria"
+            label="Eligibility Criteria"
+            fullWidth
+            value={editedSchemeData.eligibilityCriteria}
+            onChange={handleEditedSchemeDataChange}
+          />
+        <FormControl style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} fullWidth>
+  <InputLabel id="bankid-label">Bank</InputLabel>
+  <Select
+    style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
+    labelId="bankid-label"
+    id="bankid"
+    name="bankid"
+    value={editedSchemeData.bankid}
+    onChange={handleEditedSchemeDataChange}
+    fullWidth
+  >
+    {banks.map(bank => (
+      <MenuItem key={bank.id} value={bank.id} style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>
+        {bank.name}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} onClick={handleCloseEditSchemeDialog}>Cancel</Button>
+          <Button style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} onClick={handleEditScheme} color="primary">Save</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
 
 export default SchemesPage;
+

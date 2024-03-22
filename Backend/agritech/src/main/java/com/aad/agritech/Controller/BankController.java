@@ -14,7 +14,10 @@ public class BankController {
 
     @Autowired
     private BankService bankService;
-
+    @GetMapping("/banks")
+    public List<String> getBankNames(@RequestParam List<Long> ids) {
+        return bankService.getBankNames(ids);
+    }
     @PostMapping
     public ResponseEntity<String> createBank(@RequestBody Bank bank) {
         bankService.createBank(bank);

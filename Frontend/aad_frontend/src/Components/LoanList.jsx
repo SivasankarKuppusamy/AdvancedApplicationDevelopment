@@ -6,15 +6,41 @@ import '../Styles/LoanList.css'
 import axios from 'axios';
 
 const LoanExplorer = () => {
-  const [banks, setBanks] = useState([]);
-  const [page, setPage] = useState(1);
+  const [bankSchemes, setBankSchemes] = useState([]);
+  const [banks, setBanks] = useState({});
+  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [isLoggedIn,setIsLoggedin]=useState(localStorage.getItem('isLoggedIn')==='true');
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('isLoggedIn') === 'true');
+  const [totalCount, setTotalCount] = useState(0);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/bank/');
-        setBanks(response.data);
+        const bankSchemesResponse = await axios.get('http://localhost:8080/bank-schemes', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const bankSchemesData = bankSchemesResponse.data;
+        setBankSchemes(bankSchemesData);
+
+        const bankIds = bankSchemesData.map(scheme => scheme.bankid);
+        
+        // const banksResponse = await axios.get('http://localhost:8080/bank/banks', {
+        //   headers: {
+        //     Authorization: `Bearer ${localStorage.getItem('token')}`
+        //   },
+        //   params: {
+        //     ids: bankIds
+        //   }
+        // });
+        // const banksData = banksResponse.data;
+        // const banksMap = {};
+        // banksData.forEach(bank => {
+        //   banksMap[bank.id] = bank.name;
+        // });
+        // setBanks(banksMap);
+        setTotalCount(bankSchemesData.length);
       } catch (error) {
         console.error('Error fetching bank schemes:', error);
       }
@@ -33,7 +59,7 @@ const LoanExplorer = () => {
 
   return (
     <div className="loan-list" style={{ display: 'flex', marginTop: '70px' }}>
-    {isLoggedIn ===true?  <Sidebar />:<></>}
+      {isLoggedIn && <Sidebar />}
       <div className="loan-explorer-container" style={{ flex: 1, padding: '20px' }}>
         <h1>Loan Explorer</h1>
         <TableContainer component={Paper}>
@@ -46,24 +72,22 @@ const LoanExplorer = () => {
                 <TableCell>Maximum Loan Amount</TableCell>
                 <TableCell>Description</TableCell>
                 <TableCell>Eligibility Criteria</TableCell>
-                <TableCell>Apply Now</TableCell> 
+                <TableCell>Apply Now</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {banks.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((bank, bankIndex) => (
-                bank.schemes.map((scheme, schemeIndex) => (
-                  <TableRow key={schemeIndex}>
-                    <TableCell>{bank.name}</TableCell>
-                    <TableCell>{scheme.schemeName}</TableCell>
-                    <TableCell>{scheme.interestRate}</TableCell>
-                    <TableCell>{scheme.maximumLoanAmount}</TableCell>
-                    <TableCell>{scheme.description}</TableCell>
-                    <TableCell>{scheme.eligibilityCriteria}</TableCell>
-                    <TableCell>
-                      <Link to={`/new-application/${bank.id}/${scheme.id}`}>Apply Now</Link>
-                    </TableCell>
-                  </TableRow>
-                ))
+              {bankSchemes.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((scheme, schemeIndex) => (
+                <TableRow key={schemeIndex}>
+                  <TableCell>{scheme.bankid}</TableCell>
+                  <TableCell>{scheme.schemeName}</TableCell>
+                  <TableCell>{scheme.interestRate}</TableCell>
+                  <TableCell>{scheme.maximumLoanAmount}</TableCell>
+                  <TableCell>{scheme.description}</TableCell>
+                  <TableCell>{scheme.eligibilityCriteria}</TableCell>
+                  <TableCell>
+                    <Link to={`/new-application/${scheme.bankid}/${scheme.id}`}>Apply Now</Link>
+                  </TableCell>
+                </TableRow>
               ))}
             </TableBody>
           </Table>
@@ -71,7 +95,7 @@ const LoanExplorer = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
           component="div"
-          count={banks.length}
+          count={totalCount}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

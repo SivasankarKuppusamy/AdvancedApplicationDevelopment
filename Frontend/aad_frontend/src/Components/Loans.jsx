@@ -14,7 +14,9 @@ function Loans() {
     const fetchUserLoans = async () => {
       try {
         const userId = localStorage.getItem('userId');
-        const response = await axios.get(`http://localhost:8080/api/loans/d/${userId}`);
+        const response = await axios.get(`http://localhost:8080/api/loans/d/${userId}`, {headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }});
         const loans = response.data;
   console.log(loans)
         const loansWithBankNames = await Promise.all(loans.map(async loan => {
@@ -35,7 +37,9 @@ function Loans() {
 
   const fetchBankName = async (bankId) => {
     try {
-      const response = await axios.get(`http://localhost:8080/bank/${bankId}`); 
+      const response = await axios.get(`http://localhost:8080/bank/${bankId}`, {headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }}); 
       console.log(response.data)
       return response.data.name;
     } catch (error) {

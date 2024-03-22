@@ -19,7 +19,9 @@ const Sidebar = () => {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
-  const name = localStorage.getItem('userName');
+  const tname = localStorage.getItem('email');
+  const name = tname.slice(0,4); 
+
 
   const closeSidebar = () => {
     setIsOpen(false);
@@ -137,10 +139,7 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     if (window.confirm('Are you sure')) {
-      localStorage.setItem('isLoggedIn', false);
-      localStorage.setItem('userName', '');
-      localStorage.setItem('userRole', '');
-      localStorage.setItem('userId');
+      localStorage.clear();
       nav('/');
     } else {
     }
@@ -153,7 +152,7 @@ const Sidebar = () => {
           {isOpen ? (
             <div className="logo-div">
               <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="logo" />
-              <h5>{name}</h5>
+              <h5>{name}..</h5>
             </div>
           ) : (
             <img onClick={toggleSidebar} className="logo-close" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="logo" />

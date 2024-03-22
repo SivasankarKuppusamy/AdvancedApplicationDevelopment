@@ -18,7 +18,9 @@ function UserDashboard() {
     const fetchUserData = async () => {
       try {
         const userId = localStorage.getItem('userId');
-        const response = await axios.get(`http://localhost:8080/api/userdetails/${userId}`);
+        const response = await axios.get(`http://localhost:8080/api/userdetails/${userId}`, {headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }});
         setUser(response.data);
       } catch (error) {
         console.error('Error fetching user details:', error);
@@ -28,7 +30,9 @@ function UserDashboard() {
     const fetchUserLoans = async () => {
       try {
         const userId = localStorage.getItem('userId');
-        const response = await axios.get(`http://localhost:8080/api/loans/d/${userId}`);
+        const response = await axios.get(`http://localhost:8080/api/loans/d/${userId}`, {headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }});
         setUserLoans(response.data);
       } catch (error) {
         console.error('Error fetching user loans:', error);

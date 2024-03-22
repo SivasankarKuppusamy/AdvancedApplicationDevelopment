@@ -2,16 +2,25 @@ import React, { useEffect, useState } from 'react';
 import '../Styles/Navbar.css';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.jpg'
 const Navbar = () => {
 const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+const nav=useNavigate();
   useEffect(() => {
+   
+    if (localStorage.getItem('expiry') * 1000 < Date.now()) {
+      localStorage.clear();
+      alert("Session expired Please Login again!")
+      nav('/login');
+    }
     const loggedInStatus = localStorage.getItem('isLoggedIn');
     setIsLoggedIn(loggedInStatus === 'true');
+    window.ReadableByteStreamController
   }, []);
-  const name=localStorage.getItem("userName")
+  const tname = localStorage.getItem('email');
+  
+  const name = tname?tname.slice(0,10):null; 
 
   return (
     <div className="nav">
@@ -51,7 +60,7 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
                     <Link to="/about">About</Link>
                   </li>
                   {isLoggedIn ? <>
-                    <li className="li-elements"> <Link to='/profile'> {name}</Link></li>
+                    <li className="li-elements"> <Link to='/profile'> {name}....</Link></li>
                   </>:<>
                   <li className="li-elements">
                     <Link to="/register">Register</Link>

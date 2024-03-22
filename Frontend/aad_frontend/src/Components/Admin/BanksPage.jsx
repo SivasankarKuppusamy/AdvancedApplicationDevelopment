@@ -27,7 +27,9 @@ const BanksPage = () => {
   useEffect(() => {
     const fetchBanks = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/bank');
+        const response = await axios.get('http://localhost:8080/bank', {headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }});
         setBanks(response.data);
       } catch (error) {
         console.error('Error fetching banks:', error);
@@ -55,7 +57,9 @@ const BanksPage = () => {
   const handleDeleteBank = async (bankId) => {
     if (window.confirm("Are you sure to delete the bank?")) {
       try {
-        await axios.delete(`http://localhost:8080/bank/${bankId}`);
+        await axios.delete(`http://localhost:8080/bank/${bankId}`, {headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }});
         const updatedBanks = banks.filter(bank => bank.id !== bankId);
         setBanks(updatedBanks);
       } catch (error) {
@@ -66,7 +70,9 @@ const BanksPage = () => {
 
   const handleAddBank = async () => {
     try {
-      await axios.post('http://localhost:8080/bank', newBankData);
+      await axios.post('http://localhost:8080/bank', newBankData, {headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }});
       setOpenAddBankDialog(false);
       setNewBankData({
         name: '',
@@ -82,7 +88,9 @@ const BanksPage = () => {
 
   const handleEditBank = async () => {
     try {
-      await axios.put(`http://localhost:8080/bank/${editedBankData.id}`, editedBankData);
+      await axios.put(`http://localhost:8080/bank/${editedBankData.id}`, editedBankData, {headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }});
       setOpenEditBankDialog(false);
       const response = await axios.get('http://localhost:8080/bank');
       setBanks(response.data);

@@ -8,6 +8,7 @@ import com.aad.agritech.Repository.BankRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BankService {
@@ -18,7 +19,9 @@ public class BankService {
     public Bank createBank(Bank bank) {
         return bankRepository.save(bank);
     }
-
+    public List<String> getBankNames(List<Long> ids) {
+        return bankRepository.findNamesByIds(ids);
+    }
     public Optional<Bank> getBank(Long id) {
         return bankRepository.findById(id);
     }

@@ -50,7 +50,7 @@ function RegisterPage() {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/api/users', {
+      const response = await axios.post('http://localhost:8080/api/users/createUser', {
         name,
         email,
         password,
@@ -63,11 +63,13 @@ function RegisterPage() {
         email:response.data.email,
 
       })
-      console.log(response2);
-      console.log('Registration successful:', response.data);
+      alert("Registration successful..Please Login")
       nav('/login')
     } catch (error) {
-      if (error.response && error.response.status === 400) {
+      if (error.response && error.response.status === 409) {
+        alert('User Already Registered');
+      }
+    else  if (error.response && error.response.status === 400) {
         alert('There was an issue with your registration. Please check your details and try again.');
       } else {
         console.error('Registration failed:', error.response.data.errors);

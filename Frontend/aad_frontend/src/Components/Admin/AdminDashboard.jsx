@@ -8,13 +8,24 @@ import './AdminDash.css'
     const [dashboardData, setDashboardData] = useState(null);
 
     useEffect(() => {
+      // Axios interceptor to add authorization headers
+      const axiosInstance = axios.create();
+  
+      axiosInstance.interceptors.request.use(config => {
+        const token = localStorage.getItem('token');
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      });
+  
       const fetchData = async () => {
         try {
-          const loansResponse = await axios.get('http://localhost:8080/api/loans');
-          const schemesResponse = await axios.get('http://localhost:8080/bank-schemes');
-          const usersResponse = await axios.get('http://localhost:8080/api/users');
-          const banksResponse = await axios.get('http://localhost:8080/bank');
-
+          const loansResponse = await axiosInstance.get('http://localhost:8080/api/loans');
+          const schemesResponse = await axiosInstance.get('http://localhost:8080/bank-schemes');
+          const usersResponse = await axiosInstance.get('http://localhost:8080/api/users');
+          const banksResponse = await axiosInstance.get('http://localhost:8080/bank');
+  
           setDashboardData({
             loans: loansResponse.data,
             schemes: schemesResponse.data,
@@ -25,7 +36,7 @@ import './AdminDash.css'
           console.error('Error fetching data:', error);
         }
       };
-
+  
       fetchData();
     }, []);
     const adminUsers = dashboardData?.users.filter(user => user.role === 'admin');

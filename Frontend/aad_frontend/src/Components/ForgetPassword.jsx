@@ -62,7 +62,9 @@ function ForgetPasswordPage() {
     }
 
     try {
-      await axios.post('http://localhost:8080/api/users/update-password', { email, newPassword });
+      await axios.post('http://localhost:8080/api/users/update-password', { email, newPassword }, {headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }});
       alert('Password Updated...Login Now')
       window.location.href = '/login';
     } catch (error) {

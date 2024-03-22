@@ -12,7 +12,9 @@ function Profile() {
     const fetchProfileData = async () => {
       try {
         const userId = localStorage.getItem('userId');
-        const response = await axios.get(`http://localhost:8080/api/userdetails/${userId}`);
+        const response = await axios.get(`http://localhost:8080/api/userdetails/${userId}`, {headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }});
         setProfileData(response.data);
       } catch (error) {
         console.error('Error fetching profile data:', error);
@@ -38,7 +40,9 @@ function Profile() {
   const handleUpdateProfile = async () => {
     try {
       const userId = localStorage.getItem('userId');
-      const response = await axios.put(`http://localhost:8080/api/userdetails/${userId}`, updatedProfileData);
+      const response = await axios.put(`http://localhost:8080/api/userdetails/${userId}`, updatedProfileData, {headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }});
       console.log('Profile updated successfully:', response.data);
       setProfileData(updatedProfileData);
       setIsEditing(false);

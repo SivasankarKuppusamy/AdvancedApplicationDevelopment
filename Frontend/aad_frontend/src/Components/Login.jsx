@@ -3,10 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../Styles/Login.css';
 import logo from "../assets/logo.jpg"
+import { jwtDecode } from "jwt-decode";
+
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [decodedToken, setDecodedToken] = useState(null);
+
   const [formErrors, setFormErrors] = useState({
     email: '',
     password: '',
@@ -31,21 +35,33 @@ function LoginPage() {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/api/login', {
+      const response = await axios.post('http://localhost:8080/api/auth/authenticate', {
         email,
         password
       });
 
-      const userId = response.data.id;
+      const token = response.data;
+  console.log(token)
+      localStorage.setItem('token', token);
+      if (token) {
+        try {
+          const decoded = jwtDecode(token);
+          setDecodedToken(decoded);
+        localStorage.setItem('userRole',decoded.role);
+        localStorage.setItem('email',decoded.sub);
+        localStorage.setItem("expiry",decoded.exp);
+        localStorage.setItem("isFilled",decoded.filled);
+        localStorage.setItem("isLoggedIn",true);
+        localStorage.setItem("userId",decoded.id);
 
-      localStorage.setItem('userId', userId);
-      localStorage.setItem('userName', response.data.name);
-      localStorage.setItem('isLoggedIn', true);
-      if(response.data.role==='user'){
-      localStorage.setItem('userRole','user')
-
-      if(response.data.isFilled){
-
+        } catch (error) {
+          console.error('Error decoding JWT token:', error);
+        }
+      } else {
+        console.warn('No JWT token found in localStorage');
+      }
+        if(localStorage.getItem('userRole')==='user'){
+      if(localStorage.getItem('isFilled')){
         nav('/user');
       }
       else{
@@ -53,7 +69,7 @@ function LoginPage() {
         nav('/profile')
       }
     }
-    else if(response.data.role==='admin'){
+    else if(localStorage.getItem('userRole')==='admin'){
       localStorage.setItem('userRole','admin')
       nav('/admin-dashboard')
     }

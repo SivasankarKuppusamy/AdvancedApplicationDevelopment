@@ -16,7 +16,9 @@ const LoansPage = () => {
     useEffect(() => {
       const fetchLoans = async () => {
         try {
-          const response = await axios.get('http://localhost:8080/api/loans');
+          const response = await axios.get('http://localhost:8080/api/loans', {headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }});
           setLoans(response.data);
         } catch (error) {
           console.error('Error fetching loans:', error);
@@ -37,7 +39,9 @@ const LoansPage = () => {
   
     const handleApproveLoan = async () => {
       try {
-        await axios.put(`http://localhost:8080/api/loans/${selectedLoanId}/approve`);
+        await axios.put(`http://localhost:8080/api/loans/${selectedLoanId}/approve`, {headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }});
         const updatedLoans = loans.map(loan => {
           if (loan.id === selectedLoanId) {
             return { ...loan, status: 'Approved' };
@@ -53,7 +57,9 @@ const LoansPage = () => {
   
     const handleDenyLoan = async () => {
       try {
-        await axios.put(`http://localhost:8080/api/loans/${selectedLoanId}/deny`);
+        await axios.put(`http://localhost:8080/api/loans/${selectedLoanId}/deny`, {headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }});
         const updatedLoans = loans.map(loan => {
           if (loan.id === selectedLoanId) {
             return { ...loan, status: 'Denied' };

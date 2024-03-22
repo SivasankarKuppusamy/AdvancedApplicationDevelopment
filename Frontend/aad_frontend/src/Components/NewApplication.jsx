@@ -33,7 +33,9 @@ function NewApplication() {
     const fetchUserData = async () => {
       try {
         const userId = localStorage.getItem('userId');
-        const response = await axios.get(`http://localhost:8080/api/userdetails/${userId}`);
+        const response = await axios.get(`http://localhost:8080/api/userdetails/${userId}`, {headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }});
         const userData = response.data;
         setFormData({
           ...formData,
@@ -60,7 +62,9 @@ function NewApplication() {
   useEffect(() => {
     const fetchSchemeInterestRate = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/bank-schemes/${schemeId}`);
+        const response = await axios.get(`http://localhost:8080/bank-schemes/${schemeId}`, {headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }});
         console.log(response);
         const schemeData = response.data;
         setInterestRate(schemeData.interestRate);
@@ -114,7 +118,9 @@ const nav=useNavigate();
         dueAmount: 0,
         requiredMachinery: formData.requiredMachinery,
         status: 'Pending',
-      });
+      }, {headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }});
       nav('/documents')
       console.log('Application submitted successfully:', response.data);
     } catch (error) {

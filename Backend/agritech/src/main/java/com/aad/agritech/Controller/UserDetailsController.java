@@ -6,7 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.aad.agritech.Model.UserDetails;
-import com.aad.agritech.Service.UserDetailsService;
+import com.aad.agritech.Model.Users;
+import com.aad.agritech.Service.UserDetailsServices;
 
 import java.util.List;
 
@@ -14,13 +15,16 @@ import java.util.List;
 @RequestMapping("/api/userdetails")
 public class UserDetailsController {
 
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsServices userDetailsService;
 
     @Autowired
-    public UserDetailsController(UserDetailsService userDetailsService) {
+    public UserDetailsController(UserDetailsServices userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
-
+ @GetMapping("/getbyEmail/{email}")
+        public Users getMethodName(@RequestParam String email) {
+            return userDetailsService.getByEmail(email);
+        }
     @GetMapping
     public ResponseEntity<List<UserDetails>> getAllUserDetails() {
         List<UserDetails> userDetailsList = userDetailsService.getAllUserDetails();

@@ -2,6 +2,7 @@ package com.aad.agritech.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.aad.agritech.Model.Loan;
@@ -17,6 +18,7 @@ public class LoanController {
     private LoanService loanService;
 
     @PutMapping("/{loanId}/approve")
+    
     public ResponseEntity<?> approveLoan(@PathVariable Long loanId) {
         try {
             Loan loan = loanService.approveLoan(loanId);

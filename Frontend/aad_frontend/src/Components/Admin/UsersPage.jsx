@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import Sidebar from '../Sidebar';
 import './UserPage.css'
+
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(0);
@@ -12,6 +13,8 @@ const UsersPage = () => {
   const [order, setOrder] = useState('asc');
   const [filter, setFilter] = useState('');
   const [openAddUserDialog, setOpenAddUserDialog] = useState(false);
+  const [openEditUserDialog, setOpenEditUserDialog] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
   const [newUserData, setNewUserData] = useState({
     role: '',
     email: '',
@@ -22,7 +25,9 @@ const UsersPage = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/users');
+        const response = await axios.get('http://localhost:8080/api/users', {headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }});
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -50,18 +55,22 @@ const UsersPage = () => {
   const handleDeleteUser = async (userId) => {
     if(window.confirm("Are you sure to Delete a user")){
     try {
-      await axios.delete(`http://localhost:8080/api/users/${userId}`);
+      await axios.delete(`http://localhost:8080/api/users/${userId}`, {headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }});
       const updatedUsers = users.filter(user => user.id !== userId);
       setUsers(updatedUsers);
     } catch (error) {
       console.error('Error deleting user:', error);
     }
-}
+  }
   };
 
   const handleAddUser = async () => {
     try {
-      await axios.post('http://localhost:8080/api/users', newUserData);
+      await axios.post('http://localhost:8080/api/users', newUserData, {headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }});
       setOpenAddUserDialog(false);
       setNewUserData({
         role: '',
@@ -69,7 +78,9 @@ const UsersPage = () => {
         email: '',
         password: ''
       });
-      const response = await axios.get('http://localhost:8080/api/users');
+      const response = await axios.get('http://localhost:8080/api/users', {headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }});
       setUsers(response.data);
     } catch (error) {
       console.error('Error adding user:', error);
@@ -82,6 +93,46 @@ const UsersPage = () => {
 
   const handleCloseAddUserDialog = () => {
     setOpenAddUserDialog(false);
+  };
+
+  const handleOpenEditUserDialog = (userId) => {
+    setSelectedUserId(userId);
+    setOpenEditUserDialog(true);
+    const selectedUser = users.find(user => user.id === userId);
+    setNewUserData(selectedUser);
+  };
+
+  const handleCloseEditUserDialog = () => {
+    setOpenEditUserDialog(false);
+    setSelectedUserId(null);
+    setNewUserData({
+      role: '',
+      name:'',
+      email: '',
+      password: ''
+    });
+  };
+
+  const handleEditUser = async () => {
+    try {
+      await axios.put(`http://localhost:8080/api/users/${selectedUserId}`, newUserData, {headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }});
+      setOpenEditUserDialog(false);
+      setSelectedUserId(null);
+      setNewUserData({
+        role: '',
+        name:'',
+        email: '',
+        password: ''
+      });
+      const response = await axios.get('http://localhost:8080/api/users', {headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }});
+      setUsers(response.data);
+    } catch (error) {
+      console.error('Error editing user:', error);
+    }
   };
 
   const handleNewUserDataChange = (event) => {
@@ -124,6 +175,7 @@ const UsersPage = () => {
                     <em style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>All</em>
                   </MenuItem>
                   <MenuItem style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} value="admin">Admin</MenuItem>
+                 
                   <MenuItem style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} value="user">User</MenuItem>
                   <MenuItem style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} value="bank">Bank</MenuItem>
                 </Select>
@@ -181,6 +233,7 @@ const UsersPage = () => {
                         <TableCell style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>{user.role}</TableCell>
                         <TableCell style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>
                           <Button style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} color="error" onClick={() => handleDeleteUser(user.id)}>Delete</Button>
+                          <Button style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} color="primary" onClick={() => handleOpenEditUserDialog(user.id)}>Edit</Button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -204,22 +257,22 @@ const UsersPage = () => {
       <Dialog open={openAddUserDialog} onClose={handleCloseAddUserDialog}>
         <DialogTitle style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>Add User</DialogTitle>
         <DialogContent style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>
-        <FormControl>
-      <InputLabel id="role-label">Role</InputLabel>
-      <Select style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
-        labelId="role-label"
-        id="role"
-        name="role"
-        value={newUserData.role}
-        onChange={handleNewUserDataChange}
-      >
-        <MenuItem style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} value="admin">Admin</MenuItem>
-        <MenuItem style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} value="user">User</MenuItem>
-        <MenuItem style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} value="bank">Bank</MenuItem>
-      </Select>
-    </FormControl>
+          <FormControl>
+            <InputLabel id="role-label">Role</InputLabel>
+            <Select style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
+              labelId="role-label"
+              id="role"
+              name="role"
+              value={newUserData.role}
+              onChange={handleNewUserDataChange}
+            >
+              <MenuItem style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} value="admin">Admin</MenuItem>
+              <MenuItem style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} value="user">User</MenuItem>
+              <MenuItem style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} value="bank">Bank</MenuItem>
+            </Select>
+          </FormControl>
           <TextField
-          style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
+            style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
             margin="dense"
             id="email"
             name="email"
@@ -229,7 +282,7 @@ const UsersPage = () => {
             onChange={handleNewUserDataChange}
           />
           <TextField
-          style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
+            style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
             margin="dense"
             id="name"
             name="name"
@@ -239,12 +292,11 @@ const UsersPage = () => {
             onChange={handleNewUserDataChange}
           />
           <TextField
-          style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
+            style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
             margin="dense"
             id="password"
             name="password"
             label="Password"
-            
             type="password"
             fullWidth
             value={newUserData.password}
@@ -254,6 +306,60 @@ const UsersPage = () => {
         <DialogActions>
           <Button style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} onClick={handleCloseAddUserDialog}>Cancel</Button>
           <Button style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} onClick={handleAddUser} color="primary">Add</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={openEditUserDialog} onClose={handleCloseEditUserDialog}>
+      <DialogTitle style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>Edit User</DialogTitle>
+        <DialogContent style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}>
+          <FormControl>
+            <InputLabel id="role-label">Role</InputLabel>
+            <Select style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
+              labelId="role-label"
+              id="role"
+              name="role"
+              value={newUserData.role}
+              onChange={handleNewUserDataChange}
+            >
+              <MenuItem style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} value="admin">Admin</MenuItem>
+              <MenuItem style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} value="user">User</MenuItem>
+              <MenuItem style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} value="bank">Bank</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField
+            style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
+            margin="dense"
+            id="email"
+            name="email"
+            label="Email"
+            fullWidth
+            value={newUserData.email}
+            onChange={handleNewUserDataChange}
+          />
+          <TextField
+            style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
+            margin="dense"
+            id="name"
+            name="name"
+            label="Name"
+            fullWidth
+            value={newUserData.name}
+            onChange={handleNewUserDataChange}
+          />
+          <TextField
+            style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }}
+            margin="dense"
+            id="password"
+            name="password"
+            label="Password"
+            type="password"
+            fullWidth
+            value={newUserData.password}
+            onChange={handleNewUserDataChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} onClick={handleCloseEditUserDialog}>Cancel</Button>
+          <Button style={{ fontFamily: 'Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif' }} onClick={handleEditUser} color="primary">Save</Button>
         </DialogActions>
       </Dialog>
     </div>

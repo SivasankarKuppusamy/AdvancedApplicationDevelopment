@@ -4,17 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aad.agritech.Model.UserDetails;
+import com.aad.agritech.Model.Users;
 import com.aad.agritech.Repository.UserDetailsRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class UserDetailsService {
+public class UserDetailsServices {
 
     private final UserDetailsRepository userDetailsRepository;
 
     @Autowired
-    public UserDetailsService(UserDetailsRepository userDetailsRepository) {
+    public UserDetailsServices(UserDetailsRepository userDetailsRepository) {
         this.userDetailsRepository = userDetailsRepository;
     }
 
@@ -46,5 +48,17 @@ public class UserDetailsService {
         } else {
             return false;
         }
+    }
+      public Users getByEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be null or empty");
+        }
+                Optional<Users> user = userDetailsRepository.findByEmail(email);
+        
+        if (user == null) {
+            throw new IllegalArgumentException("User with email " + email + " not found");
+        }
+        
+        return user.get();
     }
 }
