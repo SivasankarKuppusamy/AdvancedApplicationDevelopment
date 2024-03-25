@@ -7,10 +7,12 @@ function ForgetPasswordPage() {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [formErrors, setFormErrors] = useState({
     email: '',
     otp: '',
-    newPassword: ''
+    newPassword: '',
+    confirmPassword: ''
   });
   const [stage, setStage] = useState('emailInput');
 
@@ -24,8 +26,14 @@ function ForgetPasswordPage() {
       return;
     }
 
-    setStage('otpInput');
-   
+    try {
+      const response = await axios.post('http://localhost:8080/api/users/forgetPassword', { email });
+      alert(response.data);
+      setStage('otpInput');
+    } catch (error) {
+      alert("Failed to send reset link. Please try again.");
+      console.error('Reset link send failed:', error);
+    }
   };
 
   const submitOtp = async (e) => {
@@ -38,17 +46,12 @@ function ForgetPasswordPage() {
       return;
     }
 
-    try {
-      if (otp !== '1234') {
-        alert("Invalid OTP. Please try again.");
-        return;
-      }
-
-      setStage('newPasswordInput');
-    } catch (error) {
-      alert("Invalid OTP. Please try again.");
-      console.error('OTP verification failed:', error);
-    }
+   if(otp==='1234'){
+    setStage('newPasswordInput');
+   }
+   else {
+    alert("Wrong OTP")
+   }
   };
 
   const submitNewPassword = async (e) => {
@@ -61,11 +64,15 @@ function ForgetPasswordPage() {
       return;
     }
 
+    if (newPassword !== confirmPassword) {
+      errors.confirmPassword = 'Passwords do not match';
+      setFormErrors(errors);
+      return;
+    }
+
     try {
-      await axios.post('http://localhost:8080/api/users/update-password', { email, newPassword }, {headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }});
-      alert('Password Updated...Login Now')
+      const response = await axios.post('http://localhost:8080/api/users/updatePassword', { email, newPassword });
+      alert(response.data);
       window.location.href = '/login';
     } catch (error) {
       alert("Failed to update password. Please try again.");
@@ -86,6 +93,11 @@ function ForgetPasswordPage() {
   const handleNewPasswordChange = (e) => {
     setNewPassword(e.target.value);
     setFormErrors({ ...formErrors, newPassword: '' });
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    setConfirmPassword(e.target.value);
+    setFormErrors({ ...formErrors, confirmPassword: '' });
   };
 
   return (
@@ -137,6 +149,15 @@ function ForgetPasswordPage() {
                     placeholder="Enter new password"
                   />
                   {formErrors.newPassword && <p className="error">{formErrors.newPassword}</p>}
+                </div>
+                <div>
+                  <input
+                    onChange={handleConfirmPasswordChange}
+                    value={confirmPassword}
+                    type="password"
+                    placeholder="Confirm new password"
+                  />
+                  {formErrors.confirmPassword && <p className="error">{formErrors.confirmPassword}</p>}
                 </div>
                 <button type="submit">Update Password</button>
               </form>

@@ -60,15 +60,25 @@ public class UserService {
                 .map(existingUser -> {
                     existingUser.setName(user.getName());
                     existingUser.setEmail(user.getEmail());
-                    existingUser.setPassword(user.getPassword());
+                    existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
                     existingUser.setFilled(user.isFilled());
-
                     userRepo.save(existingUser);
                     return ResponseEntity.ok("User updated successfully.");
                 })
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with id: " + id));
     }
 
+    public void sendDummyOTP(String email) {
+     
+        System.out.println("Dummy OTP sent to " + email + ": 1234");
+    }
+
+    public void updatePassword(String email, String newPassword) {
+        Optional<Users> users = userRepo.findByEmail(email);
+        Users user=users.get();
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+                userRepo.save(user);
+    }
   
     
    

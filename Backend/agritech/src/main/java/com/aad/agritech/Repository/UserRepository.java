@@ -11,5 +11,6 @@ import com.aad.agritech.Model.Users;
 public interface UserRepository extends JpaRepository<Users, Long> {
 
 	boolean existsByEmail(String email);
+	
 	Optional<Users> findByEmail(String email);
 }
